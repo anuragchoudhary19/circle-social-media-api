@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
 const morgan = require('morgan');
+const expresValidator = require('express-validator');
 const dotenv = require('dotenv');
 dotenv.config();
 
@@ -22,6 +23,9 @@ const postRoutes = require('./routes/post');
 
 //middlewares
 app.use(morgan('dev'));
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '2mb' }));
+app.use(expresValidator());
 
 //routes
 app.use('/', postRoutes);
