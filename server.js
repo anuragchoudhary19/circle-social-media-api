@@ -2,8 +2,9 @@ const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
 const morgan = require('morgan');
-const cookieParser = require('cookie-parser')
-const expresValidator = require('express-validator');
+const cookieParser = require('cookie-parser');
+const expressValidator = require('express-validator');
+const fs = require('fs');
 const dotenv = require('dotenv');
 dotenv.config();
 
@@ -15,27 +16,24 @@ mongoose
         useFindAndModify: false,
         useUnifiedTopology: true,
     })
-    .then(() => console.log('DATABASE CONNECTED'));
-
-mongoose.connection.on('error', (err) => {
-    console.log(`DATABASE CONNECTION ERROR:${err.message}`);
-});
-const postRoutes = require('./routes/post');
-const authRoutes = require('./routes/auth');
+    .then(() => console.log('DATABASE CONNECTED'))
+    .catch((err) => console.log(`DATABASE CONNECTION ERROR:${err.message}`));
 
 //middlewares
 app.use(morgan('dev'));
-app.use(cookieParser())
+app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json({ limit: '2mb' }));
-app.use(expresValidator());
+app.use(expressValidator());
 
 //routes
-app.use('/', postRoutes);
-app.use('/', authRoutes);
+fs.readdirSync('./routes').map((r) => app.use('/api', require('./routes/' + r)));
+app.use(function (err, req, res, next) {
+    if (err.name === 'UnauthorizedError') {
+        res.status(401).json({ error: 'Unauthorized!' });
+    }
+});
 
 //port
 const PORT = process.env.PORT || 8000;
-app.listen(PORT, () => {
-    console.log(`SERVER IS RUNNING ON PORT ${PORT}`);
-});
+app.listen(PORT, () => console.log(`SERVER IS RUNNING ON PORT ${PORT}`));

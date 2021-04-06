@@ -1,12 +1,12 @@
 exports.validateSignup = (req, res, next) => {
-    // check for firstName
+    // check for Name
     req.check('name', 'Name is required').notEmpty();
     // check for Email
     req
         .check('email', 'Email is required')
         .notEmpty()
         .matches(/.+\@.+\..+/)
-        .withMessage('Email must be in the form john@smith.domain');
+        .withMessage('Email must conatin @');
 
     req
         .check('password', 'Password is required')
