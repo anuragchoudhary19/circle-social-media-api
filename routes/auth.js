@@ -7,9 +7,9 @@ const { validateSignup } = require('../validator/user');
 
 router.post('/signup', validateSignup, signup);
 router.post('/signin', signin);
-router.get('/signout', signout);
+router.get('/logout', signout);
 
 //any routes containing :userId,then app will first execute userById()
-router.param('userId', userById)
+router.param('userId', userById);
 
 module.exports = router;
