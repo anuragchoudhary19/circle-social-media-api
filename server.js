@@ -13,6 +13,7 @@ dotenv.config();
 const io = require('socket.io')(http, {
   cors: {
     origin: ['http://localhost:3001', 'http://localhost:3002', 'https://historic-capitol-reef-67891.herokuapp.com/'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   },
   transports: ['websocket', 'polling'],
 });
