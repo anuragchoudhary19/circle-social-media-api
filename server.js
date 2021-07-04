@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-var http = require('http').createServer(app);
+var server = require('http').createServer(app);
 const mongoose = require('mongoose');
 const morgan = require('morgan');
 const cors = require('cors');
@@ -39,9 +39,9 @@ app.use(function (err, req, res, next) {
 });
 //port
 const PORT = process.env.PORT || 8000;
-app.listen(PORT, () => console.log(`SERVER IS RUNNING ON PORT ${PORT}`));
+server.listen(PORT, () => console.log(`SERVER IS RUNNING ON PORT ${PORT}`));
 
-const io = require('socket.io')(9000, {
+const io = require('socket.io')(server, {
   cors: {
     origin: ['http://localhost:3001', 'http://localhost:3002', 'https://historic-capitol-reef-67891.herokuapp.com/'],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
