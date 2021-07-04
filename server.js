@@ -13,7 +13,7 @@ const io = require('socket.io')(9000, {
   cors: {
     origin: ['http://localhost:3001', 'http://localhost:3002', 'https://historic-capitol-reef-67891.herokuapp.com/'],
   },
-  transports: ['websocket'],
+  transports: ['websocket', 'polling'],
 });
 
 //CONNECT TO DATABASE
