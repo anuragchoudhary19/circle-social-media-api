@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+var http = require('http').createServer(app);
 const mongoose = require('mongoose');
 const morgan = require('morgan');
 const cors = require('cors');
@@ -9,7 +10,7 @@ const Status = require('./models/status');
 const fs = require('fs');
 const dotenv = require('dotenv');
 dotenv.config();
-const io = require('socket.io')(9000, {
+const io = require('socket.io')(http, {
   cors: {
     origin: ['http://localhost:3001', 'http://localhost:3002', 'https://historic-capitol-reef-67891.herokuapp.com/'],
   },
