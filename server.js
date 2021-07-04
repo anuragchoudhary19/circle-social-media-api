@@ -37,6 +37,10 @@ app.use(function (err, req, res, next) {
     res.status(401).json({ error: 'Unauthorized!' });
   }
 });
+//port
+const PORT = process.env.PORT || 8000;
+app.listen(PORT, () => console.log(`SERVER IS RUNNING ON PORT ${PORT}`));
+
 const statusEventEmitter = Status.watch();
 statusEventEmitter.on('change', async (change) => {
   console.log(change);
@@ -67,9 +71,7 @@ io.on('connection', (socket) => {
     console.log(id);
   });
 });
-//port
-const PORT = process.env.PORT || 8000;
-app.listen(PORT, () => console.log(`SERVER IS RUNNING ON PORT ${PORT}`));
+
 const io = require('socket.io')(http, {
   cors: {
     origin: ['http://localhost:3001', 'http://localhost:3002', 'https://historic-capitol-reef-67891.herokuapp.com/'],
