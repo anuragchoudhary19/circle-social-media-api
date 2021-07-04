@@ -10,13 +10,6 @@ const Status = require('./models/status');
 const fs = require('fs');
 const dotenv = require('dotenv');
 dotenv.config();
-const io = require('socket.io')(http, {
-  cors: {
-    origin: ['http://localhost:3001', 'http://localhost:3002', 'https://historic-capitol-reef-67891.herokuapp.com/'],
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-  },
-  transports: ['websocket', 'polling'],
-});
 
 //CONNECT TO DATABASE
 mongoose
@@ -77,3 +70,11 @@ io.on('connection', (socket) => {
 //port
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => console.log(`SERVER IS RUNNING ON PORT ${PORT}`));
+const io = require('socket.io')(http, {
+  cors: {
+    origin: ['http://localhost:3001', 'http://localhost:3002', 'https://historic-capitol-reef-67891.herokuapp.com/'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+  },
+  transports: ['websocket', 'polling'],
+  allowUpgrades: true,
+});
