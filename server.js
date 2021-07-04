@@ -41,6 +41,15 @@ app.use(function (err, req, res, next) {
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => console.log(`SERVER IS RUNNING ON PORT ${PORT}`));
 
+const io = require('socket.io')(http, {
+  cors: {
+    origin: ['http://localhost:3001', 'http://localhost:3002', 'https://historic-capitol-reef-67891.herokuapp.com/'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+  },
+  transports: ['websocket', 'polling'],
+  allowUpgrades: true,
+});
+
 const statusEventEmitter = Status.watch();
 statusEventEmitter.on('change', async (change) => {
   console.log(change);
@@ -70,13 +79,4 @@ io.on('connection', (socket) => {
     io.to(id).emit('reload', id);
     console.log(id);
   });
-});
-
-const io = require('socket.io')(http, {
-  cors: {
-    origin: ['http://localhost:3001', 'http://localhost:3002', 'https://historic-capitol-reef-67891.herokuapp.com/'],
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-  },
-  transports: ['websocket', 'polling'],
-  allowUpgrades: true,
 });
