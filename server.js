@@ -1,6 +1,5 @@
 const express = require('express');
 const app = express();
-// var server = require('http').createServer(app);
 const mongoose = require('mongoose');
 const morgan = require('morgan');
 const cors = require('cors');
@@ -22,19 +21,25 @@ mongoose
   .then(() => console.log('DATABASE CONNECTED'))
   .catch((err) => console.log(`DATABASE CONNECTION ERROR:${err.message}`));
 
-const corsOptions = {
-  origin: ['https://circle-social-media.netlify.app/', 'https://localhost:3001'],
+var whitelist = ['https://circle-social-media.netlify.app/', 'https://localhost:3001'];
+var corsOptions = {
+  origin: function (origin, callback) {
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD'],
   credentials: true,
 };
+
 //middlewares
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-  app.header('Access-Control-Allow-Origin', '*');
-  app.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-  app.header('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-  app.header('Access-Control-Allow-Credentials', true);
+  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+  res.header('Access-Control-Allow-Credentials', true);
   next();
 });
 app.use(morgan('dev'));
