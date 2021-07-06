@@ -41,7 +41,7 @@ app.use(function (err, req, res, next) {
 const PORT = process.env.PORT || 8000;
 server.listen(PORT, () => console.log(`SERVER IS RUNNING ON PORT ${PORT}`));
 
-const io = require('socket.io')(server, {
+const io = require('socket.io')(9000, {
   cors: {
     origin: [
       'http://localhost:3001',
