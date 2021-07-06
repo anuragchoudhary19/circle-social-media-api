@@ -41,9 +41,14 @@ app.use(function (err, req, res, next) {
 const PORT = process.env.PORT || 8000;
 server.listen(PORT, () => console.log(`SERVER IS RUNNING ON PORT ${PORT}`));
 
-const io = require('socket.io')(server, {
+const io = require('socket.io')(9000, {
   cors: {
-    origin: ['http://localhost:3001', 'http://localhost:3002', 'https://historic-capitol-reef-67891.herokuapp.com/'],
+    origin: [
+      'http://localhost:3001',
+      'http://localhost:3002',
+      'http://192.168.29.222:3001',
+      'https://historic-capitol-reef-67891.herokuapp.com/',
+    ],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   },
   transports: ['websocket', 'polling'],

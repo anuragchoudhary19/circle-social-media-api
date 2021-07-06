@@ -15,6 +15,8 @@ const {
   getFollowing,
   getFollowers,
   removeImage,
+  newUsers,
+  getSearchedUser,
 } = require('../controllers/user');
 const { jwtCheck, authCheck } = require('../middleware/auth');
 
@@ -29,6 +31,8 @@ router.delete('/user', jwtCheck, authCheck, removeUser);
 router.get('/user/:username', jwtCheck, authCheck, getProfile);
 router.get('/user/followers/:username', jwtCheck, authCheck, getFollowers);
 router.get('/user/following/:username', jwtCheck, authCheck, getFollowing);
+router.get('/newUsers', jwtCheck, authCheck, newUsers);
+router.get('/users/:search', jwtCheck, authCheck, getSearchedUser);
 router.get('/user/:username', jwtCheck, authCheck, getProfile);
 //photo
 router.get('/user/photo/:userId', jwtCheck, authCheck, userPhoto);

@@ -12,21 +12,26 @@ const userSchema = new mongoose.Schema(
       maxlength: 30,
       minlength: 2,
       text: true,
+      index: true,
     },
     firstname: {
       type: String,
       trim: true,
       text: true,
+      index: true,
     },
     lastname: {
       type: String,
       trim: true,
       text: true,
+      index: true,
     },
     email: {
       type: String,
       trim: true,
       required: true,
+      text: true,
+      index: true,
     },
     hashed_password: {
       type: String,

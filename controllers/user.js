@@ -115,7 +115,7 @@ exports.removeUser = async (req, res) => {
 
 exports.follow = async (req, res) => {
   try {
-    const user = User.findByIdAndUpdate(req.profile._id, { $push: { following: req.params.id } }).exec();
+    const user = await User.findByIdAndUpdate(req.profile._id, { $push: { following: req.params.id } }).exec();
     const followedUser = User.findByIdAndUpdate(req.params.id, { $push: { followers: req.profile._id } }).exec();
     res.json({ success: true });
   } catch (error) {
@@ -125,9 +125,36 @@ exports.follow = async (req, res) => {
 
 exports.unfollow = async (req, res) => {
   try {
-    const user = User.findByIdAndUpdate(req.profile._id, { $pull: { following: req.params.id } }).exec();
+    const user = await User.findByIdAndUpdate(req.profile._id, { $pull: { following: req.params.id } }).exec();
     const followedUser = User.findByIdAndUpdate(req.params.id, { $pull: { followers: req.profile._id } }).exec();
     res.json({ success: true });
+  } catch (error) {
+    res.status(400).json({ success: false });
+  }
+};
+
+exports.newUsers = async (req, res) => {
+  try {
+    const newUsers = await User.find({ _id: { $nin: [req.profile._id] }, followers: { $nin: [req.profile._id] } })
+      .select('_id username firstname lastname photo')
+      .sort([['createdAt', -1]])
+      .limit(5)
+      .exec();
+    console.log(newUsers);
+    res.status(200).json({ newUsers });
+  } catch (error) {
+    res.status(400).json({ success: false });
+  }
+};
+exports.getSearchedUser = async (req, res) => {
+  try {
+    const users = await User.find({ $text: { $search: req.params.search } })
+      .select('_id username firstname lastname photo')
+      .sort([['createdAt', -1]])
+      .limit(5)
+      .exec();
+    console.log(users);
+    res.status(200).json({ users });
   } catch (error) {
     res.status(400).json({ success: false });
   }
