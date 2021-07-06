@@ -50,6 +50,7 @@ const io = require('socket.io')(9000, {
   cors: corsOptions,
   transports: ['websocket', 'polling'],
   allowUpgrades: true,
+  credentials: true,
 });
 
 const statusEventEmitter = Status.watch();
