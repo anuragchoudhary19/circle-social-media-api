@@ -21,8 +21,11 @@ mongoose
   })
   .then(() => console.log('DATABASE CONNECTED'))
   .catch((err) => console.log(`DATABASE CONNECTION ERROR:${err.message}`));
+
 const corsOptions = {
-  origin: '*',
+  origin: ['https://circle-social-media.netlify.app/', 'https://localhost:3001'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD'],
+  credentials: true,
 };
 //middlewares
 app.use(morgan('dev'));
@@ -44,10 +47,7 @@ const PORT = process.env.PORT || 8000;
 server.listen(PORT, () => console.log(`SERVER IS RUNNING ON PORT ${PORT}`));
 
 const io = require('socket.io')(9000, {
-  cors: {
-    origin: '*',
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-  },
+  cors: corsOptions,
   transports: ['websocket', 'polling'],
   allowUpgrades: true,
 });
