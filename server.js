@@ -21,13 +21,15 @@ mongoose
   })
   .then(() => console.log('DATABASE CONNECTED'))
   .catch((err) => console.log(`DATABASE CONNECTION ERROR:${err.message}`));
-
+const corsOptions = {
+  origin: ['https://circle-social-media.netlify.app/', 'http://localhost:3001'],
+};
 //middlewares
 app.use(morgan('dev'));
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json({ limit: '2mb' }));
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(expressValidator());
 
 //routes
@@ -48,7 +50,7 @@ const io = require('socket.io')(9000, {
       'http://localhost:3002',
       'http://192.168.29.222:3001',
       'https://historic-capitol-reef-67891.herokuapp.com/',
-      'https://angry-neumann-83c01f.netlify.app/',
+      'https://circle-social-media.netlify.app/',
     ],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   },
