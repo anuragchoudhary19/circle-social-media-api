@@ -22,7 +22,7 @@ mongoose
   .then(() => console.log('DATABASE CONNECTED'))
   .catch((err) => console.log(`DATABASE CONNECTION ERROR:${err.message}`));
 const corsOptions = {
-  origin: ['https://circle-social-media.netlify.app/', 'http://localhost:3001'],
+  origin: '*',
 };
 //middlewares
 app.use(morgan('dev'));
