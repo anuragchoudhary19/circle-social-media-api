@@ -30,7 +30,7 @@ const corsOptions = {
 //middlewares
 app.use((req, res, next) => {
   // Website you wish to allow to connect
-  res.setHeader('Access-Control-Allow-Origin', 'https://circle-social-media.netlify.app, https://localhost:3001');
+  res.setHeader('Access-Control-Allow-Origin', '*');
 
   // Request methods you wish to allow
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
@@ -49,7 +49,7 @@ app.use(morgan('dev'));
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json({ limit: '2mb' }));
-// app.use(cors(corsOptions));
+app.use(cors(corsOptions));
 app.use(expressValidator());
 
 //routes
@@ -63,7 +63,7 @@ app.use(function (err, req, res, next) {
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => console.log(`SERVER IS RUNNING ON PORT ${PORT}`));
 
-const io = require('socket.io')(443, {
+const io = require('socket.io')(8000, {
   cors: corsOptions,
   transports: ['websocket', 'polling'],
   allowUpgrades: true,
