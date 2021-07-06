@@ -45,13 +45,7 @@ server.listen(PORT, () => console.log(`SERVER IS RUNNING ON PORT ${PORT}`));
 
 const io = require('socket.io')(9000, {
   cors: {
-    origin: [
-      'http://localhost:3001',
-      'http://localhost:3002',
-      'http://192.168.29.222:3001',
-      'https://historic-capitol-reef-67891.herokuapp.com/',
-      'https://circle-social-media.netlify.app/',
-    ],
+    origin: '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   },
   transports: ['websocket', 'polling'],
