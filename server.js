@@ -63,7 +63,7 @@ app.use(function (err, req, res, next) {
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => console.log(`SERVER IS RUNNING ON PORT ${PORT}`));
 
-const io = require('socket.io')(8000, {
+const io = require('socket.io')(9000, {
   cors: corsOptions,
   transports: ['websocket', 'polling'],
   allowUpgrades: true,
