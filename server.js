@@ -29,21 +29,21 @@ mongoose
 //   ],
 //   credentials: true,
 // };
-const corsFunction = (req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'https://main.d3qe7opexhqn2c.amplifyapp.com');
-  res.header(
-    'Access-Control-Allow-Headers',
-    'Origin,Accept,Authorization, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers'
-  );
-  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-  next();
-};
+
 app.use(morgan('dev'));
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json({ limit: '2mb' }));
 app.use(expressValidator());
-app.use(corsFunction());
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', 'https://main.d3qe7opexhqn2c.amplifyapp.com');
+  res.header(
+    'Access-Control-Allow-Headers',
+    'Origin,Accept,Authorization, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers'
+  );
+  res.header('Access-Control-Allow-Methods', '*');
+  next();
+});
 app.use(cors());
 //routes
 fs.readdirSync('./routes').map((r) => app.use('/api', require('./routes/' + r)));
