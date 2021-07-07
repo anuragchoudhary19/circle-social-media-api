@@ -1,5 +1,4 @@
 const express = require('express');
-const { createProxyMiddleware } = require('http-proxy-middleware');
 const app = express();
 const mongoose = require('mongoose');
 const morgan = require('morgan');
@@ -39,11 +38,9 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json({ limit: '2mb' }));
 app.use(expressValidator());
-app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
-
 //routes
-fs.readdirSync('./routes').map((r) => app.use('/api', require('./routes/' + r)));
+fs.readdirSync('./routes').map((r) => app.use('/api', cors(corsOptions), require('./routes/' + r)));
 app.use(function (err, req, res, next) {
   if (err.name === 'UnauthorizedError') {
     res.status(401).json({ error: 'Unauthorized!' });
