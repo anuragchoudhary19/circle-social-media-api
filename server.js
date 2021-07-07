@@ -1,4 +1,5 @@
 const express = require('express');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 const app = express();
 const mongoose = require('mongoose');
 const morgan = require('morgan');
@@ -21,34 +22,20 @@ mongoose
   .then(() => console.log('DATABASE CONNECTED'))
   .catch((err) => console.log(`DATABASE CONNECTION ERROR:${err.message}`));
 
-// var whitelist = ['https://circle-social-media.netlify.app/', 'https://localhost:3001'];
-// var corsOptions = {
-//   origin: function (origin, callback) {
-//     if (whitelist.indexOf(origin) !== -1) {
-//       callback(null, true);
-//     } else {
-//       callback(new Error('Not allowed by CORS'));
-//     }
-//   },
-//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD'],
-//   credentials: true,
-// };
-
-//middlewares
-// app.use((req, res, next) => {
-//   res.header('Access-Control-Allow-Origin', '*');
-//   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-//   res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-//   res.header('Access-Control-Allow-Credentials', true);
-//   next();
-// });
+var corsOptions = ['https://circle-social-media.netlify.app/', 'http://192.168.29.222', 'http://localhost'];
 app.use(morgan('dev'));
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json({ limit: '2mb' }));
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(expressValidator());
-
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+  res.header('Access-Control-Allow-Credentials', true);
+  next();
+});
 //routes
 fs.readdirSync('./routes').map((r) => app.use('/api', require('./routes/' + r)));
 app.use(function (err, req, res, next) {
