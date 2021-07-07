@@ -35,7 +35,7 @@ app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Methods', '*');
   next();
 });
-app.use(cors());
+app.use(cors({ origin: '*' }));
 //routes
 fs.readdirSync('./routes').map((r) => app.use('/api', require('./routes/' + r)));
 
