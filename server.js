@@ -58,10 +58,9 @@ const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => console.log(`SERVER IS RUNNING ON PORT ${PORT}`));
 
 const io = require('socket.io')(9000, {
-  cors: corsOptions,
+  cors: { origin: '*' },
   transports: ['websocket', 'polling'],
   allowUpgrades: true,
-  credentials: true,
 });
 
 const statusEventEmitter = Status.watch();
