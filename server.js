@@ -48,39 +48,39 @@ app.use(function (err, req, res, next) {
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => console.log(`SERVER IS RUNNING ON PORT ${PORT}`));
 
-const io = require('socket.io')(9000, {
-  cors: { origin: '*' },
-  transports: ['websocket', 'polling'],
-  allowUpgrades: true,
-});
+// const io = require('socket.io')(9000, {
+//   cors: { origin: '*' },
+//   transports: ['websocket', 'polling'],
+//   allowUpgrades: true,
+// });
 
-const statusEventEmitter = Status.watch();
-statusEventEmitter.on('change', async (change) => {
-  console.log(change);
-  if (change.operationType === 'update' || change.operationType === 'delete') {
-    const updatedStatus = await Status.findOne({ _id: change.documentKey._id }).exec();
-    if (updatedStatus) {
-      console.log(updatedStatus);
-      io.emit('post-update', {
-        id: updatedStatus._id,
-        likes: updatedStatus.likes,
-        forwards: updatedStatus.retweets,
-        comments: updatedStatus.comments,
-      });
-    }
-  }
-});
-io.on('connection', (socket) => {
-  socket.on('update', (message) => {
-    io.emit('update', message);
-    console.log(message);
-  });
-  socket.on('new-post', (id) => {
-    io.to(id).emit('reload', id);
-    console.log(id);
-  });
-  socket.on('profile-update', (id) => {
-    io.to(id).emit('reload', id);
-    console.log(id);
-  });
-});
+// const statusEventEmitter = Status.watch();
+// statusEventEmitter.on('change', async (change) => {
+//   console.log(change);
+//   if (change.operationType === 'update' || change.operationType === 'delete') {
+//     const updatedStatus = await Status.findOne({ _id: change.documentKey._id }).exec();
+//     if (updatedStatus) {
+//       console.log(updatedStatus);
+//       io.emit('post-update', {
+//         id: updatedStatus._id,
+//         likes: updatedStatus.likes,
+//         forwards: updatedStatus.retweets,
+//         comments: updatedStatus.comments,
+//       });
+//     }
+//   }
+// });
+// io.on('connection', (socket) => {
+//   socket.on('update', (message) => {
+//     io.emit('update', message);
+//     console.log(message);
+//   });
+//   socket.on('new-post', (id) => {
+//     io.to(id).emit('reload', id);
+//     console.log(id);
+//   });
+//   socket.on('profile-update', (id) => {
+//     io.to(id).emit('reload', id);
+//     console.log(id);
+//   });
+// });
