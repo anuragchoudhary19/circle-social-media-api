@@ -22,7 +22,7 @@ mongoose
   .then(() => console.log('DATABASE CONNECTED'))
   .catch((err) => console.log(`DATABASE CONNECTION ERROR:${err.message}`));
 
-var corsOptions = ['https://circle-social-media.netlify.app/', 'http://192.168.29.222', 'http://localhost'];
+var corsOptions = ['https://main.d3qe7opexhqn2c.amplifyapp.com/', 'http://192.168.29.222', 'http://localhost'];
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
