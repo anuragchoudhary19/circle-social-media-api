@@ -45,7 +45,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json({ limit: '2mb' }));
 app.use(expressValidator());
 //routes
-fs.readdirSync('./routes').map((r) => app.use('/api', corsFunction(), cors(), require('./routes/' + r)));
+fs.readdirSync('./routes').map((r) => app.use('/api', require('./routes/' + r)));
 
 app.use(function (err, req, res, next) {
   if (err.name === 'UnauthorizedError') {
