@@ -24,6 +24,7 @@ mongoose
 
 var corsOptions = {
   origin: ['https://main.d3qe7opexhqn2c.amplifyapp.com/', 'http://192.168.29.222', 'http://localhost'],
+  methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'PATCH', 'DELETE'],
   credentials: true,
 };
 app.use((req, res, next) => {
