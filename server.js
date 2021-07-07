@@ -21,27 +21,18 @@ mongoose
   .then(() => console.log('DATABASE CONNECTED'))
   .catch((err) => console.log(`DATABASE CONNECTION ERROR:${err.message}`));
 
-// var corsOptions = {
-//   origin: ['https://main.d3qe7opexhqn2c.amplifyapp.com/', 'http://192.168.29.222', 'http://localhost'],
-//   methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'PATCH', 'DELETE'],
-//   allowedHeaders: [
-//     'Origin,Accept,Authorization,X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers',
-//   ],
-//   credentials: true,
-// };
-
 app.use(morgan('dev'));
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json({ limit: '2mb' }));
 app.use(expressValidator());
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'https://main.d3qe7opexhqn2c.amplifyapp.com');
-  res.header(
+  res.setHeader('Access-Control-Allow-Origin', 'https://main.d3qe7opexhqn2c.amplifyapp.com');
+  res.setHeader(
     'Access-Control-Allow-Headers',
     'Origin,Accept,Authorization, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers'
   );
-  res.header('Access-Control-Allow-Methods', '*');
+  res.setHeader('Access-Control-Allow-Methods', '*');
   next();
 });
 app.use(cors());
