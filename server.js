@@ -23,12 +23,6 @@ mongoose
   .catch((err) => console.log(`DATABASE CONNECTION ERROR:${err.message}`));
 
 var corsOptions = ['https://circle-social-media.netlify.app/', 'http://192.168.29.222', 'http://localhost'];
-app.use(morgan('dev'));
-app.use(cookieParser());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json({ limit: '2mb' }));
-app.use(cors(corsOptions));
-app.use(expressValidator());
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
@@ -36,6 +30,13 @@ app.use((req, res, next) => {
   res.header('Access-Control-Allow-Credentials', true);
   next();
 });
+app.use(morgan('dev'));
+app.use(cookieParser());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '2mb' }));
+app.use(cors(corsOptions));
+app.use(expressValidator());
+
 //routes
 fs.readdirSync('./routes').map((r) => app.use('/api', require('./routes/' + r)));
 app.use(function (err, req, res, next) {
