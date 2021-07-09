@@ -46,41 +46,39 @@ app.use(function (err, req, res, next) {
 });
 //port
 const PORT = process.env.PORT || 8000;
-app.listen(PORT, () => console.log(`SERVER IS RUNNING ON PORT ${PORT}`));
+let server = app.listen(PORT, () => console.log(`SERVER IS RUNNING ON PORT ${PORT}`));
+// console.log(server);
 
-const io = require('socket.io')(9000, {
+const io = require('socket.io')(server, {
   cors: { origin: '*' },
   transports: ['websocket', 'polling'],
   allowUpgrades: true,
 });
 
-const statusEventEmitter = Status.watch();
+const statusEventEmitter = Status.watch(null, { fullDocument: 'updateLookup' });
 statusEventEmitter.on('change', async (change) => {
   console.log(change);
-  if (change.operationType === 'update' || change.operationType === 'delete') {
-    const updatedStatus = await Status.findOne({ _id: change.documentKey._id }).exec();
-    if (updatedStatus) {
-      console.log(updatedStatus);
-      io.emit('post-update', {
-        id: updatedStatus._id,
-        likes: updatedStatus.likes,
-        forwards: updatedStatus.retweets,
-        comments: updatedStatus.comments,
-      });
-    }
+  if (change.operationType === 'update') {
+    let document = change.fullDocument;
+    io.emit('status-update', {
+      id: document._id,
+      likes: document.likes,
+      forwards: document.retweets,
+      comments: document.comments,
+    });
   }
 });
-io.on('connection', (socket) => {
-  socket.on('update', (message) => {
-    io.emit('update', message);
-    console.log(message);
-  });
-  socket.on('new-post', (id) => {
-    io.to(id).emit('reload', id);
-    console.log(id);
-  });
-  socket.on('profile-update', (id) => {
-    io.to(id).emit('reload', id);
-    console.log(id);
-  });
-});
+// io.on('connection', (socket) => {
+//   socket.on('update', (message) => {
+//     io.emit('update', message);
+//     console.log(message);
+//   });
+//   socket.on('new-post', (id) => {
+//     io.to(id).emit('reload', id);
+//     console.log(id);
+//   });
+//   socket.on('profile-update', (id) => {
+//     io.to(id).emit('reload', id);
+//     console.log(id);
+//   });
+// });

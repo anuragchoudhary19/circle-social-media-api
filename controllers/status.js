@@ -30,15 +30,26 @@ exports.list = async (req, res) => {
 exports.read = async (req, res) => {
   try {
     const status = await Status.findOne({ _id: req.params.id })
-      .populate({
-        path: 'comments',
-        populate: { path: 'commentedBy', select: '_id firstname lastname username photo' },
-      })
       .sort([['createdAt', -1]])
       .populate('postedBy', '_id firstname lastname username photo')
       .exec();
     console.log(status);
     res.status(200).json({ status });
+  } catch (error) {
+    res.status(403).json({ error: 'Not found' });
+    console.log(error);
+  }
+};
+exports.readComments = async (req, res) => {
+  try {
+    const status = await Status.findOne({ _id: req.params.id })
+      .populate({
+        path: 'comments',
+        populate: { path: 'commentedBy', select: '_id firstname lastname username photo' },
+      })
+      .exec();
+    console.log(status);
+    res.status(200).json({ comments: status.comments });
   } catch (error) {
     res.status(403).json({ error: 'Not found' });
     console.log(error);
