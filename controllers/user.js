@@ -139,6 +139,7 @@ exports.newUsers = async (req, res) => {
       .select('_id username firstname lastname photo')
       .sort([['createdAt', -1]])
       .limit(5)
+      .lean()
       .exec();
     console.log(newUsers);
     res.status(200).json({ newUsers });

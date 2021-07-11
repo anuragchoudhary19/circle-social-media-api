@@ -1,5 +1,6 @@
 const Status = require('../models/status');
 const Comment = require('../models/comment');
+const _ = require('lodash');
 const User = require('../models/user');
 const io = require('socket.io')(9001, {
   cors: {
@@ -144,6 +145,52 @@ exports.removeComment = async (req, res) => {
       { $pull: { comments: comment._id } }
     ).exec();
     res.status(200).json({ message: 'ok' });
+  } catch (error) {
+    res.status(401).json({ error: error });
+    console.log(error);
+  }
+};
+
+exports.feed = async (req, res) => {
+  let t1 = new Date().getTime();
+  try {
+    const statuses = await Status.find({
+      postedBy: { $in: [...req.profile.followers, ...req.profile.following, req.profile._id] },
+      likes: { $in: [...req.profile.followers, ...req.profile.following, req.profile._id] },
+      postedBy: { $ne: [req.profile._id] },
+    })
+      .populate({
+        path: 'postedBy',
+        select: '_id firstname lastname username photo',
+      })
+      .lean()
+      .exec();
+    // const likes = await Status.find({
+
+    // })
+    //   .populate({
+    //     path: 'postedBy',
+    //     select: '_id firstname lastname username photo',
+    //   })
+    //   .lean()
+    //   .exec();
+    const comments = await Comment.find({
+      commentedBy: { $in: [...req.profile.followers, ...req.profile.following, req.profile._id] },
+    })
+      .populate([
+        { path: 'statusId', populate: { path: 'postedBy', select: '_id firstname lastname username photo' } },
+        {
+          path: 'commentedBy',
+          select: '_id firstname lastname username photo',
+        },
+      ])
+      .lean()
+      .exec();
+    const feed = [...statuses, ...comments];
+    const sortedFeed = feed.sort((a, b) => b.createdAt - a.createdAt);
+    let t2 = new Date().getTime();
+    console.log(t2 - t1);
+    res.status(200).json({ feed: sortedFeed });
   } catch (error) {
     res.status(401).json({ error: error });
     console.log(error);

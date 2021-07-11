@@ -12,12 +12,14 @@ const {
   likesByThisUser,
   removeComment,
   readComments,
+  feed,
 } = require('../controllers/status');
 const { validateCreateStatus } = require('../validator/status');
 const { jwtCheck, authCheck } = require('../middleware/auth');
 const { userById } = require('../controllers/user');
 
 router.post('/status', jwtCheck, authCheck, validateCreateStatus, create);
+router.get('/status/feed', jwtCheck, authCheck, feed);
 router.get('/status/:id', jwtCheck, authCheck, read);
 router.get('/status/comments/:id', jwtCheck, authCheck, readComments);
 router.get('/status/all/:id', jwtCheck, authCheck, list);
