@@ -37,7 +37,7 @@ app.use(expressValidator());
 // });
 app.use(
   cors({
-    origin: 'https://priceless-torvalds-109d67.netlify.app',
+    origin: process.env.ORIGIN,
   })
 );
 //routes
