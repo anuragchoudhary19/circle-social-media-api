@@ -54,8 +54,8 @@ let server = app.listen(PORT, () => console.log(`SERVER IS RUNNING ON PORT ${POR
 // console.log(server);
 
 const io = require('socket.io')(server, {
-  cors: { origin: '*' },
-  transports: ['websocket', 'polling'],
+  cors: { origins: [process.env.ORIGIN] },
+  transports: ['websocket', 'polling', 'flashsocket'],
   allowUpgrades: true,
 });
 
