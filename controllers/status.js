@@ -157,7 +157,6 @@ exports.feed = async (req, res) => {
     const statuses = await Status.find({
       postedBy: { $in: [...req.profile.followers, ...req.profile.following, req.profile._id] },
       likes: { $in: [...req.profile.followers, ...req.profile.following, req.profile._id] },
-      postedBy: { $ne: [req.profile._id] },
     })
       .populate({
         path: 'postedBy',
@@ -165,15 +164,6 @@ exports.feed = async (req, res) => {
       })
       .lean()
       .exec();
-    // const likes = await Status.find({
-
-    // })
-    //   .populate({
-    //     path: 'postedBy',
-    //     select: '_id firstname lastname username photo',
-    //   })
-    //   .lean()
-    //   .exec();
     const comments = await Comment.find({
       commentedBy: { $in: [...req.profile.followers, ...req.profile.following, req.profile._id] },
     })
