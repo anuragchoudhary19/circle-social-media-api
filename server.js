@@ -35,7 +35,11 @@ app.use(expressValidator());
 //   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PATCH,PUT,DELETE,OPTIONS');
 //   next();
 // });
-app.use(cors());
+app.use(
+  cors({
+    origin: 'https://priceless-torvalds-109d67.netlify.app',
+  })
+);
 //routes
 fs.readdirSync('./routes').map((r) => app.use('/api', require('./routes/' + r)));
 
