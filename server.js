@@ -26,20 +26,20 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json({ limit: '2mb' }));
 app.use(expressValidator());
-// app.use((req, res, next) => {
-//   res.setHeader('Access-Control-Allow-Origin', '*');
-//   res.setHeader(
-//     'Access-Control-Allow-Headers',
-//     'Origin,Accept,Authorization, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers'
-//   );
-//   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PATCH,PUT,DELETE,OPTIONS');
-//   next();
-// });
-app.use(
-  cors({
-    origin: process.env.ORIGIN,
-  })
-);
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', process.env.ORIGIN);
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'Origin,Accept,Authorization, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers'
+  );
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PATCH,PUT,DELETE,OPTIONS');
+  next();
+});
+// app.use(
+//   cors({
+//     origin: process.env.ORIGIN,
+//   })
+// );
 //routes
 fs.readdirSync('./routes').map((r) => app.use('/api', require('./routes/' + r)));
 
