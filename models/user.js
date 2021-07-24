@@ -7,6 +7,7 @@ const userSchema = new mongoose.Schema(
   {
     username: {
       type: String,
+      unique: true,
       trim: true,
       required: true,
       maxlength: 30,
@@ -28,10 +29,9 @@ const userSchema = new mongoose.Schema(
     },
     email: {
       type: String,
+      unique: true,
       trim: true,
       required: true,
-      text: true,
-      index: true,
     },
     hashed_password: {
       type: String,
@@ -39,10 +39,18 @@ const userSchema = new mongoose.Schema(
     },
     salt: String,
     photo: {
-      type: Object,
+      public_id: { type: String },
+      url: {
+        type: String,
+        default:
+          'https://res.cloudinary.com/dtknvzouc/image/upload/v1626040666/blank-profile-picture-973460_1280_tploix.png',
+      },
     },
     background: {
-      type: Object,
+      public_id: { type: String },
+      url: {
+        type: String,
+      },
     },
     bio: { type: String, maxlength: 200 },
     dob: { type: String },

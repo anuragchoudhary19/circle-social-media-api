@@ -7,7 +7,7 @@ const mongoose = require('mongoose');
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const expressValidator = require('express-validator');
-const Status = require('./models/status');
+const Tweet = require('./models/tweet');
 const fs = require('fs');
 
 //CONNECT TO DATABASE
@@ -49,18 +49,25 @@ const io = require('socket.io')(server, {
   allowUpgrades: true,
 });
 
-const statusEventEmitter = Status.watch(null, { fullDocument: 'updateLookup' });
-statusEventEmitter.on('change', async (change) => {
-  console.log(change);
-  if (change.operationType === 'update') {
-    let document = change.fullDocument;
-    io.emit('status-update', {
-      id: document._id,
-      likes: document.likes,
-      forwards: document.retweets,
-      comments: document.comments,
-    });
-  }
+const tweetEventEmitter = Tweet.watch(null, { fullDocument: 'updateLookup' });
+io.on('connection', (socket) => {
+  tweetEventEmitter.on('change', async (change) => {
+    if (change.operationType === 'insert') {
+      io.emit('status-insert', socket.id);
+    }
+    if (change.operationType === 'delete') {
+      io.emit('status-delete', socket.id);
+    }
+    if (change.operationType === 'update') {
+      let document = change.fullDocument;
+      io.emit('tweet-update', {
+        id: document._id,
+        likes: document.likes.length,
+        retweets: document.retweets.length,
+        comments: document.comments.length,
+      });
+    }
+  });
 });
 // io.on('connection', (socket) => {
 //   socket.on('update', (message) => {

@@ -11,17 +11,11 @@ exports.jwtCheck = expressJWT({
 });
 
 exports.authCheck = async (req, res, next) => {
-  // console.log(req.auth);
   const { _id } = req.auth;
   try {
-    const user = await User.findById(_id)
-      .populate('following', '_id name username')
-      .populate('followers', '_id name username')
-      .lean()
-      .exec();
-    // console.log(user);
+    const user = await User.findOne({ _id }).lean();
     req.profile = user;
-    const authorized = req.profile && req.auth && req.profile._id.toString() === req.auth._id.toString();
+    const authorized = req.profile._id.toString() === _id.toString();
     if (!authorized) {
       return res.status(403).json({ error: 'User is not authorized to perform this action' });
     }

@@ -1,9 +1,11 @@
 const mongoose = require('mongoose');
 const { ObjectId } = mongoose.Schema;
 
-const statusSchema = new mongoose.Schema(
+const tweetSchema = new mongoose.Schema(
   {
-    text: {
+    isOnTimeline: Boolean,
+    isOnTweet: Boolean,
+    tweet: {
       type: String,
       required: true,
     },
@@ -19,12 +21,12 @@ const statusSchema = new mongoose.Schema(
     comments: [
       {
         type: ObjectId,
-        ref: 'Comment',
+        ref: 'Tweet',
       },
     ],
-    postedBy: { type: ObjectId, ref: 'User' },
+    user: { type: ObjectId, ref: 'User' },
   },
   { timestamps: true }
 );
 
-module.exports = mongoose.model('Status', statusSchema);
+module.exports = mongoose.model('Tweet', tweetSchema);
