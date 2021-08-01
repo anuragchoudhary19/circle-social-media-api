@@ -44,7 +44,7 @@ const PORT = process.env.PORT || 8000;
 let server = app.listen(PORT, () => console.log(`SERVER IS RUNNING ON PORT ${PORT}`));
 
 const io = require('socket.io')(server, {
-  cors: { origins: [process.env.ORIGIN] },
+  cors: { origins: process.env.ORIGIN },
   transports: ['websocket', 'polling', 'flashsocket'],
   allowUpgrades: true,
 });
@@ -53,10 +53,11 @@ const tweetEventEmitter = Tweet.watch(null, { fullDocument: 'updateLookup' });
 io.on('connection', (socket) => {
   tweetEventEmitter.on('change', async (change) => {
     if (change.operationType === 'insert') {
-      io.emit('status-insert', socket.id);
+      let document = change.fullDocument;
+      io.emit('tweet-insert', document._id);
     }
     if (change.operationType === 'delete') {
-      io.emit('status-delete', socket.id);
+      io.emit('tweet-delete', socket.id);
     }
     if (change.operationType === 'update') {
       let document = change.fullDocument;

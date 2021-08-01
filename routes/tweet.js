@@ -12,6 +12,7 @@ const {
   feed,
   listLikedTweets,
   listRepliedTweets,
+  getNewTweet,
 } = require('../controllers/tweet');
 const { validateCreateStatus } = require('../validator/tweet');
 const { jwtCheck, authCheck } = require('../middleware/auth');
