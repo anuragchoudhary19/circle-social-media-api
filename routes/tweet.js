@@ -9,15 +9,19 @@ const {
   like,
   getTweet,
   remove,
+  feed,
+  listLikedTweets,
+  listRepliedTweets,
 } = require('../controllers/tweet');
 const { validateCreateStatus } = require('../validator/tweet');
 const { jwtCheck, authCheck } = require('../middleware/auth');
 
-// router.get('/tweet/feed', jwtCheck, authCheck, feed);
+router.get('/feed', jwtCheck, authCheck, feed);
 
 router.post('/tweet', jwtCheck, authCheck, validateCreateStatus, tweetOnTimeline);
-router.get('/tweets/:userId', jwtCheck, authCheck, listTweets);
-// router.get('/tweets/:userId', jwtCheck, authCheck, listLikedTweets);
+router.get('/tweets/all/:userId', jwtCheck, authCheck, listTweets);
+router.get('/tweets/likes/:userId', jwtCheck, authCheck, listLikedTweets);
+router.get('/tweets/replies/:userId', jwtCheck, authCheck, listRepliedTweets);
 router.get('/tweet/:id', jwtCheck, authCheck, getTweet);
 
 router.delete('/tweet/:id', jwtCheck, authCheck, remove);

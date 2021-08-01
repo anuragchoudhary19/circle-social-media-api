@@ -3,8 +3,9 @@ const { ObjectId } = mongoose.Schema;
 
 const tweetSchema = new mongoose.Schema(
   {
-    isOnTimeline: Boolean,
-    isOnTweet: Boolean,
+    isTweet: Boolean,
+    isReply: Boolean,
+    repliedTo: { type: ObjectId, ref: 'Tweet' },
     tweet: {
       type: String,
       required: true,
