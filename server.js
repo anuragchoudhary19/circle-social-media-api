@@ -54,10 +54,10 @@ io.on('connection', (socket) => {
   tweetEventEmitter.on('change', async (change) => {
     if (change.operationType === 'insert') {
       let document = change.fullDocument;
-      io.emit('tweet-insert', document._id);
+      io.emit('feed-reload', socket.id);
     }
     if (change.operationType === 'delete') {
-      io.emit('tweet-delete', socket.id);
+      io.emit('feed-reload', socket.id);
     }
     if (change.operationType === 'update') {
       let document = change.fullDocument;
