@@ -79,12 +79,7 @@ exports.updateUser = async (req, res) => {
   try {
     console.log(req.body);
     let user = await User.findOneAndUpdate({ _id: req.profile._id }, { ...req.body.userData }, { new: true }).exec();
-    user.hashed_password = undefined;
-    user.salt = undefined;
-    user.updatedAt = undefined;
-    user.__v = undefined;
-    user.email = undefined;
-    res.status(201).json({ message: 'ok', updatedUser: user });
+    res.status(201).json({ message: 'ok', username: user.username });
   } catch (error) {
     console.log(err);
     return res.status(400).json({ error: 'You are not authorized to perform this action' });
@@ -148,10 +143,10 @@ exports.unfollow = async (req, res) => {
 
 exports.toFollow = async (req, res) => {
   try {
-    console.log(req.profile.following);
     const newUsers = await User.find({ _id: { $nin: [...req.profile.following, req.profile._id] } })
       .select('_id username firstname lastname photo')
       .sort([['createdAt', -1]])
+      .limit(5)
       .lean()
       .exec();
     res.status(200).json({ newUsers });
