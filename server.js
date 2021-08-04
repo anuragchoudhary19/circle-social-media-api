@@ -23,7 +23,7 @@ mongoose
 app.use(
   cors({
     origin: process.env.ORIGIN,
-    methods: ['GET', 'PUT', 'POST', 'HEAD', 'PATCH', 'DELETE'],
+    methods: 'GET,PUT,POST,HEAD,PATCH,DELETE',
   })
 );
 app.use(morgan('dev'));
