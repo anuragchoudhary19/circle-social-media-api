@@ -23,6 +23,7 @@ mongoose
 app.use(
   cors({
     origin: process.env.ORIGIN,
+    methods: ['GET', 'PUT', 'POST', 'HEAD', 'PATCH', 'DELETE'],
   })
 );
 app.use(morgan('dev'));
@@ -44,7 +45,7 @@ const PORT = process.env.PORT || 8000;
 let server = app.listen(PORT, () => console.log(`SERVER IS RUNNING ON PORT ${PORT}`));
 
 const io = require('socket.io')(server, {
-  cors: { origins: process.env.ORIGIN },
+  cors: { origin: process.env.ORIGIN, methods: ['GET', 'PUT', 'POST', 'HEAD', 'PATCH', 'DELETE'] },
   transports: ['websocket', 'polling', 'flashsocket'],
   allowUpgrades: true,
 });
