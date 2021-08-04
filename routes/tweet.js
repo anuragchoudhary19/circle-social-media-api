@@ -12,6 +12,7 @@ const {
   feed,
   listLikedTweets,
   listRepliedTweets,
+  getTweetComments,
   getNewTweet,
 } = require('../controllers/tweet');
 const { validateCreateStatus } = require('../validator/tweet');
@@ -24,6 +25,7 @@ router.get('/tweets/all/:userId', jwtCheck, authCheck, listTweets);
 router.get('/tweets/likes/:userId', jwtCheck, authCheck, listLikedTweets);
 router.get('/tweets/replies/:userId', jwtCheck, authCheck, listRepliedTweets);
 router.get('/tweet/:id', jwtCheck, authCheck, getTweet);
+router.get('/tweet/comments/:id', jwtCheck, authCheck, getTweetComments);
 
 router.delete('/tweet/:id', jwtCheck, authCheck, remove);
 // router.get('/status/comments/:id', jwtCheck, authCheck, readComments);

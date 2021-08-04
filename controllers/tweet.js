@@ -126,13 +126,9 @@ exports.remove = async (req, res) => {
 exports.getTweet = async (req, res) => {
   try {
     const tweet = await Tweet.findOne({ _id: req.params.id })
-      .populate([
-        { path: 'comments', populate: { path: 'user', select: '_id firstname lastname username photo' } },
-        { path: 'user', select: '_id firstname lastname username photo' },
-      ])
+      .populate([{ path: 'user', select: '_id firstname lastname username photo' }])
       .lean()
       .exec();
-    console.log(tweet);
     if (tweet) {
       if (JSON.stringify(tweet.likes).includes(req.profile._id)) {
         tweet.liked = true;
@@ -144,6 +140,20 @@ exports.getTweet = async (req, res) => {
       } else {
         tweet.retweeted = false;
       }
+    }
+    res.status(200).json({ tweet });
+  } catch (error) {
+    res.status(403).json({ error: 'Not found' });
+    console.log(error);
+  }
+};
+exports.getTweetComments = async (req, res) => {
+  try {
+    const tweet = await Tweet.findOne({ _id: req.params.id })
+      .populate([{ path: 'comments', populate: { path: 'user', select: '_id firstname lastname username photo' } }])
+      .lean()
+      .exec();
+    if (tweet) {
       tweet.comments.forEach((tweet) => {
         if (JSON.stringify(tweet.likes).includes(req.profile._id)) {
           tweet.liked = true;
@@ -157,7 +167,7 @@ exports.getTweet = async (req, res) => {
         }
       });
     }
-    res.status(200).json({ tweet });
+    res.status(200).json({ comments: tweet.comments });
   } catch (error) {
     res.status(403).json({ error: 'Not found' });
     console.log(error);

@@ -51,13 +51,14 @@ const io = require('socket.io')(server, {
 
 const tweetEventEmitter = Tweet.watch(null, { fullDocument: 'updateLookup' });
 io.on('connection', (socket) => {
+  console.log(socket);
   tweetEventEmitter.on('change', async (change) => {
+    console.log(change);
     if (change.operationType === 'insert') {
-      let document = change.fullDocument;
-      io.emit('feed-reload', socket.id);
+      io.to(socket.id).emit('fetch-new-list');
     }
     if (change.operationType === 'delete') {
-      io.emit('feed-reload', socket.id);
+      io.to(socket.id).emit('fetch-new-list');
     }
     if (change.operationType === 'update') {
       let document = change.fullDocument;
