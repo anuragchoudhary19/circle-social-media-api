@@ -85,6 +85,16 @@ exports.updateUser = async (req, res) => {
     return res.status(400).json({ error: 'You are not authorized to perform this action' });
   }
 };
+exports.changePassword = async (req, res) => {
+  try {
+    console.log(req.body);
+    let user = await User.findOneAndUpdate({ _id: req.profile._id }, { password: req.body.password }).exec();
+    res.status(201).json({ message: 'ok' });
+  } catch (error) {
+    console.log(err);
+    return res.status(400).json({ error: 'You are not authorized to perform this action' });
+  }
+};
 exports.userPhoto = async (req, res) => {
   if (req.profile.photo.data) {
     res.set(('Content-Type', req.profile.photo.contentType));

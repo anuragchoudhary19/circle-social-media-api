@@ -52,7 +52,6 @@ const io = require('socket.io')(server, {
 
 const tweetEventEmitter = Tweet.watch(null, { fullDocument: 'updateLookup' });
 io.on('connection', (socket) => {
-  console.log(socket);
   tweetEventEmitter.on('change', async (change) => {
     console.log(change);
     if (change.operationType === 'insert') {
