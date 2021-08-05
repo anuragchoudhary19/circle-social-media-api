@@ -13,7 +13,7 @@ exports.jwtCheck = expressJWT({
 exports.authCheck = async (req, res, next) => {
   const { _id } = req.auth;
   try {
-    const user = await User.findOne({ _id }).lean();
+    const user = await User.findOne({ _id }).lean().exec();
     req.profile = user;
     const authorized = req.profile._id.toString() === _id.toString();
     if (!authorized) {
