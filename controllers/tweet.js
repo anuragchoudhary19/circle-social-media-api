@@ -182,16 +182,22 @@ exports.like = async (req, res) => {
     } else {
       await Tweet.findOneAndUpdate({ _id: req.params.id }, { $push: { likes: req.profile._id } }).exec();
     }
+    res.status(200).json({ message: 'ok' });
   } catch (error) {
-    res.status(403).json({ error: 'Not found' });
+    res.status(403).json({ error: 'failed' });
   }
 };
 exports.retweet = async (req, res) => {
-  const tweet = await Tweet.findOne({ _id: req.params.id }).exec();
-  if (tweet.retweets.includes(req.profile._id)) {
-    await Tweet.findOneAndUpdate({ _id: req.params.id }, { $pull: { retweets: req.profile._id } }).exec();
-  } else {
-    await Tweet.findOneAndUpdate({ _id: req.params.id }, { $push: { retweets: req.profile._id } }).exec();
+  try {
+    const tweet = await Tweet.findOne({ _id: req.params.id }).exec();
+    if (tweet.retweets.includes(req.profile._id)) {
+      await Tweet.findOneAndUpdate({ _id: req.params.id }, { $pull: { retweets: req.profile._id } }).exec();
+    } else {
+      await Tweet.findOneAndUpdate({ _id: req.params.id }, { $push: { retweets: req.profile._id } }).exec();
+    }
+    res.status(200).json({ message: 'ok' });
+  } catch (error) {
+    res.status(403).json({ error: 'failed' });
   }
 };
 
