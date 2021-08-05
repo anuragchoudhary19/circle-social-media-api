@@ -30,9 +30,9 @@ router.get('/tweet/comments/:id', jwtCheck, authCheck, getTweetComments);
 router.delete('/tweet/:id', jwtCheck, authCheck, remove);
 // router.get('/status/comments/:id', jwtCheck, authCheck, readComments);
 
-router.post('/tweet/like/:id', jwtCheck, authCheck, like);
-router.post('/tweet/retweet/:id', jwtCheck, authCheck, retweet);
-router.post('/tweet/comment/:id', jwtCheck, authCheck, commentOnTweet);
+router.put('/tweet/like/:id', jwtCheck, authCheck, like);
+router.put('/tweet/retweet/:id', jwtCheck, authCheck, retweet);
+router.put('/tweet/comment/:id', jwtCheck, authCheck, commentOnTweet);
 // router.delete('/tweet/comment/:id', jwtCheck, authCheck, removeComment);
 
 //any routes containing :userId,then app will first execute userById()
