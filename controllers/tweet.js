@@ -5,22 +5,33 @@ const User = require('../models/user');
 exports.tweetOnTimeline = async (req, res) => {
   try {
     const tweet = await new Tweet({ ...req.body, isTweet: true, user: req.profile._id }).save();
+    tweet.populate('user', '_id firstname lastname username photo', (err, result) => {
+      req.socket.emit(`new tweet on profile ${result.user._id}`, result);
+    });
     res.status(200).json({ message: 'ok' });
   } catch (error) {
-    console.log(error);
     res.status(403).json({ error });
   }
 };
 
 exports.commentOnTweet = async (req, res) => {
   try {
-    const comment = await new Tweet({
+    await new Tweet({
       ...req.body.comment,
       isReply: true,
       repliedTo: req.params.id,
       user: req.profile._id,
-    }).save();
-    const tweet = await Tweet.findOneAndUpdate({ _id: req.params.id }, { $push: { comments: comment._id } }).exec();
+    })
+      .save()
+      .then((newComment) => {
+        Tweet.findOneAndUpdate({ _id: req.params.id }, { $push: { comments: newComment._id } }).exec();
+        return newComment;
+      })
+      .then((newComment) => {
+        newComment.populate('user', '_id firstname lastname username photo', (err, result) => {
+          req.socket.emit(`comment on ${result.repliedTo}`, result);
+        });
+      });
     res.status(200).json({ message: 'ok' });
   } catch (error) {
     res.status(401).json({ error: error });
@@ -33,6 +44,7 @@ exports.listTweets = async (req, res) => {
     const tweets = await Tweet.find({ user: req.params.userId })
       .where({ isTweet: true })
       .populate('user', '_id firstname lastname username photo')
+      .sort({ createdAt: -1 })
       .lean()
       .exec();
     tweets.forEach((tweet) => {
@@ -115,8 +127,10 @@ exports.listRepliedTweets = async (req, res) => {
 
 exports.remove = async (req, res) => {
   try {
-    const tweet = await Tweet.findOneAndDelete({ _id: req.params.id }).exec();
-    const comments = await Tweet.deleteMany({ _id: { $in: [...tweet.comments] } }).exec();
+    const tweet = await Tweet.findOneAndDelete({ _id: req.params.id }).exec((err, result) => {
+      req.socket.emit('tweet-deleted', result._id);
+    });
+    // const comments = await Tweet.deleteMany({ _id: { $in: [...tweet.comments] } }).exec();
     res.status(200).json({ message: 'ok' });
   } catch (error) {
     res.status(403).json({ error: error });
@@ -178,9 +192,17 @@ exports.like = async (req, res) => {
   try {
     const tweet = await Tweet.findOne({ _id: req.params.id }).exec();
     if (tweet.likes.includes(req.profile._id)) {
-      await Tweet.findOneAndUpdate({ _id: req.params.id }, { $pull: { likes: req.profile._id } }).exec();
+      await Tweet.findOneAndUpdate({ _id: req.params.id }, { $pull: { likes: req.profile._id } }).exec(
+        (err, result) => {
+          req.socket.emit(`unliked ${result._id}`);
+        }
+      );
     } else {
-      await Tweet.findOneAndUpdate({ _id: req.params.id }, { $push: { likes: req.profile._id } }).exec();
+      await Tweet.findOneAndUpdate({ _id: req.params.id }, { $push: { likes: req.profile._id } }).exec(
+        (err, result) => {
+          req.socket.emit(`liked ${result._id}`);
+        }
+      );
     }
     res.status(200).json({ message: 'ok' });
   } catch (error) {
@@ -191,9 +213,17 @@ exports.retweet = async (req, res) => {
   try {
     const tweet = await Tweet.findOne({ _id: req.params.id }).exec();
     if (tweet.retweets.includes(req.profile._id)) {
-      await Tweet.findOneAndUpdate({ _id: req.params.id }, { $pull: { retweets: req.profile._id } }).exec();
+      await Tweet.findOneAndUpdate({ _id: req.params.id }, { $pull: { retweets: req.profile._id } }).exec(
+        (err, result) => {
+          req.socket.emit(`undo-retweet ${result._id}`);
+        }
+      );
     } else {
-      await Tweet.findOneAndUpdate({ _id: req.params.id }, { $push: { retweets: req.profile._id } }).exec();
+      await Tweet.findOneAndUpdate({ _id: req.params.id }, { $push: { retweets: req.profile._id } }).exec(
+        (err, result) => {
+          req.socket.emit(`retweet ${result._id}`);
+        }
+      );
     }
     res.status(200).json({ message: 'ok' });
   } catch (error) {
