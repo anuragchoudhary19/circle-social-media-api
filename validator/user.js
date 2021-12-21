@@ -20,7 +20,8 @@ exports.validateSignup = (req, res, next) => {
   const errors = req.validationErrors();
   // if errors show the first one as they happen
   if (errors) {
-    return res.status(403).json(errors[0]);
+    // console.log(res.status(403).json(errors[0]));
+    return res.status(403).send(errors[0]);
   }
   // proceed to next middleware
   next();

@@ -295,6 +295,7 @@ exports.feed = async (req, res) => {
       }
     });
     const sortedFeed = uniqueFeed.sort((a, b) => b.createdAt - a.createdAt);
+    console.log(sortedFeed);
     res.status(200).json({ feed: sortedFeed });
   } catch (error) {
     res.status(401).json({ error: error });

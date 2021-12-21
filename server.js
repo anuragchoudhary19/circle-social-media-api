@@ -41,8 +41,12 @@ const io = require('socket.io')(server, {
   allowUpgrades: true,
 });
 const socket = io.on('connection', (socket) => {
+  socket.on('end', function () {
+    socket.disconnect();
+  });
   return socket;
 });
+
 app.use(function (req, res, next) {
   req.socket = socket;
   next();
