@@ -109,6 +109,9 @@ exports.userBackground = async (req, res) => {
 };
 exports.removeUser = async (req, res) => {
   try {
+    if (req.profile._id.toString() === '61c20c66bed0b74d58e5afa1') {
+      return res.status(200).json({ message: 'Not Allowed' });
+    }
     const user = await User.findOne({ _id: req.profile._id });
     const [removedFollowing, removedFollower] = await Promise.all([
       User.findByIdAndUpdate(req.profile._id, { $pull: { following: req.params.id } }),
