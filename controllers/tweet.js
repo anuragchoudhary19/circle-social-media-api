@@ -70,7 +70,6 @@ exports.listLikedTweets = async (req, res) => {
       .populate('user', '_id firstname lastname username photo')
       .lean()
       .exec();
-    console.log(tweets);
     tweets.forEach((tweet) => {
       tweet.liked = true;
       if (JSON.stringify(tweet.retweets).includes(req.profile._id)) {
@@ -94,7 +93,6 @@ exports.listRepliedTweets = async (req, res) => {
       ])
       .lean()
       .exec();
-    console.log(tweets);
     tweets.forEach((tweet) => {
       if (JSON.stringify(tweet.likes).includes(req.profile._id)) {
         tweet.liked = true;
@@ -127,11 +125,14 @@ exports.listRepliedTweets = async (req, res) => {
 
 exports.remove = async (req, res) => {
   try {
-    const tweet = await Tweet.findOneAndDelete({ _id: req.params.id }).exec((err, result) => {
-      req.socket.emit('tweet-deleted', result._id);
-    });
-    // const comments = await Tweet.deleteMany({ _id: { $in: [...tweet.comments] } }).exec();
-    res.status(200).json({ message: 'ok' });
+    const tweet = await Tweet.findOneAndDelete({ _id: req.params.id }).exec();
+    if (tweet.isReply) {
+      const parentTweet = await Tweet.findOneAndUpdate(
+        { _id: tweet.repliedTo },
+        { $pull: { comments: tweet._id } }
+      ).exec();
+    }
+    res.status(200).json({ message: 'deleted' });
   } catch (error) {
     res.status(403).json({ error: error });
     console.log(error);
@@ -295,7 +296,6 @@ exports.feed = async (req, res) => {
       }
     });
     const sortedFeed = uniqueFeed.sort((a, b) => b.createdAt - a.createdAt);
-    console.log(sortedFeed);
     res.status(200).json({ feed: sortedFeed });
   } catch (error) {
     res.status(401).json({ error: error });
