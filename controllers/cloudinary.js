@@ -6,14 +6,35 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-exports.upload = async (req, res) => {
-  let image = await cloudinary.uploader.upload(req.body.image, {
+exports.uploadImage = async (req, res) => {
+  try {
+    const image = await cloudinary.uploader.upload(req.body.image, {
+      public_id: `${Date.now()}`,
+      resource_type: 'auto',
+    });
+    return res.json({
+      public_id: image.public_id,
+      url: image.secure_url,
+    });
+  } catch (error) {
+    return res.status(400).json('Error in uploading images');
+  }
+};
+exports.uploadVideo = async (req, res) => {
+  const fileName = req.headers['file-name'];
+  req.on('data', (chunk) => {
+    //   console.log(`recieved chunk${chunk.length}`);
+    console.log(chunk);
+    fs.appendFileSync(fileName, chunk);
+  });
+  res.end('upload complete');
+  let video = await cloudinary.uploader.upload(req.body.video, {
     public_id: `${Date.now()}`,
-    resource_type: 'auto',
+    resource_type: 'video',
   });
   res.json({
-    public_id: image.public_id,
-    url: image.secure_url,
+    public_id: video.public_id,
+    url: video.secure_url,
   });
 };
 

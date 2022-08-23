@@ -19,12 +19,7 @@ mongoose
   })
   .then(() => console.log('DATABASE CONNECTED'))
   .catch((err) => console.log(`DATABASE CONNECTION ERROR:${err.message}`));
-app.use(
-  cors({
-    origin: process.env.ORIGIN,
-    methods: 'GET,PUT,POST,HEAD,PATCH,DELETE',
-  })
-);
+app.use(cors());
 app.use(morgan('dev'));
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
@@ -33,7 +28,10 @@ app.use(expressValidator());
 
 //port
 const PORT = process.env.PORT || 8000;
-let server = app.listen(PORT, () => console.log(`SERVER IS RUNNING ON PORT ${PORT}`));
+let server = app.listen(PORT, (err) => {
+  if (err) console.log(err);
+  console.log(`SERVER IS RUNNING ON PORT ${PORT}`);
+});
 // socket io
 const io = require('socket.io')(server, {
   cors: { origin: process.env.ORIGIN, methods: ['GET', 'PUT', 'POST', 'HEAD', 'PATCH', 'DELETE'] },
