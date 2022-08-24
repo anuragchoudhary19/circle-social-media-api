@@ -7,6 +7,7 @@ const mongoose = require('mongoose');
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const expressValidator = require('express-validator');
+const requestIp = require('request-ip');
 const fs = require('fs');
 
 //CONNECT TO DATABASE
@@ -25,6 +26,7 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json({ limit: '2mb' }));
 app.use(expressValidator());
+app.use(requestIp.mw());
 
 //port
 const PORT = process.env.PORT || 8000;

@@ -11,6 +11,7 @@ exports.jwtCheck = expressJWT({
 });
 
 exports.authCheck = async (req, res, next) => {
+  console.log(req.clientIp);
   const { _id } = req.auth;
   try {
     const user = await User.findOne({ _id }).lean().exec();
