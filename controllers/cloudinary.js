@@ -1,4 +1,5 @@
 const cloudinary = require('cloudinary').v2;
+const fs = require('fs');
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -21,21 +22,30 @@ exports.uploadImage = async (req, res) => {
   }
 };
 exports.uploadVideo = async (req, res) => {
-  const fileName = req.headers['file-name'];
-  req.on('data', (chunk) => {
-    //   console.log(`recieved chunk${chunk.length}`);
-    console.log(chunk);
-    fs.appendFileSync(fileName, chunk);
-  });
-  res.end('upload complete');
-  let video = await cloudinary.uploader.upload(req.body.video, {
-    public_id: `${Date.now()}`,
-    resource_type: 'video',
-  });
-  res.json({
-    public_id: video.public_id,
-    url: video.secure_url,
-  });
+  try {
+    const fileName = req.headers['file-name'];
+    const isLastChunk = req.headers['last-chunk'];
+    // console.log(isLastChunk);
+    req.on('data', (chunk) => {
+      // console.log(chunk);
+      fs.appendFileSync(fileName, chunk);
+    });
+    if (isLastChunk === 'true') {
+      let video = await cloudinary.uploader.upload(`./${fileName}`, {
+        public_id: `${Date.now()}`,
+        resource_type: 'video',
+      });
+      fs.unlinkSync(`./${fileName}`);
+      return res.json({
+        public_id: video.public_id,
+        url: video.secure_url,
+      });
+    }
+    res.end(`recieved chunk`);
+  } catch (error) {
+    console.log(error);
+    res.json('error');
+  }
 };
 
 exports.remove = async (req, res) => {

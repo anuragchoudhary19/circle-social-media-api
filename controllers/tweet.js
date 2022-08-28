@@ -3,8 +3,6 @@ const _ = require('lodash');
 const User = require('../models/user');
 
 exports.tweetOnTimeline = async (req, res) => {
-  // console.log(req.body);
-  // return res.status(200).json({ message: 'ok' });
   try {
     const tweet = await new Tweet({ ...req.body, isTweet: true, user: req.profile._id }).save();
     tweet.populate('user', '_id firstname lastname username photo', (err, result) => {
