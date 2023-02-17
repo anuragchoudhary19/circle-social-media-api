@@ -16,6 +16,10 @@ const tweetSchema = new mongoose.Schema(
     video: {
       public_id: String,
       url: String,
+      views: {
+        type: Number,
+        default: 0,
+      },
     },
     retweets: [{ type: ObjectId, ref: 'User' }],
     likes: [{ type: ObjectId, ref: 'User' }],

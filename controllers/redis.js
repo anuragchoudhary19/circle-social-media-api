@@ -17,7 +17,6 @@ exports.analytics = async (ip) => {
   try {
     let newData = { ip: ip, timestamp: new Date() };
     await redisClient.rPush('ips:twitter', JSON.stringify(newData));
-    console.log(await redisClient.lRange('ips:twitter', 0, -1));
   } catch (error) {
     console.log(error);
   }

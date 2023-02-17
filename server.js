@@ -27,11 +27,18 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json({ limit: '2mb' }));
 app.use(expressValidator());
 app.use(requestIp.mw());
+app.use(function (err, req, res, next) {
+  if (err.name === 'UnauthorizedError') {
+    res.status(401).json({ error: 'Unauthorized!' });
+  }
+});
+
+fs.readdirSync('./routes').map((r) => app.use('/api', require('./routes/' + r)));
 
 //port
 const PORT = process.env.PORT || 8000;
 let server = app.listen(PORT, (err) => {
-  if (err) console.log(err);
+  if (err) return console.log(err);
   console.log(`SERVER IS RUNNING ON PORT ${PORT}`);
 });
 // socket io
@@ -52,9 +59,3 @@ app.use(function (req, res, next) {
   next();
 });
 //routes
-fs.readdirSync('./routes').map((r) => app.use('/api', require('./routes/' + r)));
-app.use(function (err, req, res, next) {
-  if (err.name === 'UnauthorizedError') {
-    res.status(401).json({ error: 'Unauthorized!' });
-  }
-});

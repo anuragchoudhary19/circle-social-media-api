@@ -64,6 +64,33 @@ exports.listTweets = async (req, res) => {
     res.status(403).json({ error: 'Not found' });
   }
 };
+exports.listTweetsWithMedia = async (req, res) => {
+  try {
+    const tweets = await Tweet.find({
+      user: req.params.userId,
+      $or: [{ 'images.0': { $exists: true } }, { video: { $exists: true } }],
+    })
+      .populate('user', '_id firstname lastname username photo')
+      .sort({ createdAt: -1 })
+      .lean()
+      .exec();
+    tweets.forEach((tweet) => {
+      if (JSON.stringify(tweet.likes).includes(req.profile._id)) {
+        tweet.liked = true;
+      } else {
+        tweet.liked = false;
+      }
+      if (JSON.stringify(tweet.retweets).includes(req.profile._id)) {
+        tweet.retweeted = true;
+      } else {
+        tweet.retweeted = false;
+      }
+    });
+    res.status(200).json({ tweets });
+  } catch (error) {
+    res.status(403).json({ error: 'Not found' });
+  }
+};
 exports.listLikedTweets = async (req, res) => {
   try {
     const tweets = await Tweet.find({ likes: { $in: req.params.userId } })
