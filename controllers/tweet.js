@@ -220,17 +220,13 @@ exports.like = async (req, res) => {
   try {
     const tweet = await Tweet.findOne({ _id: req.params.id }).exec();
     if (tweet.likes.includes(req.profile._id)) {
-      await Tweet.findOneAndUpdate({ _id: req.params.id }, { $pull: { likes: req.profile._id } }).exec(
-        (err, result) => {
-          req.socket.emit(`unliked ${result._id}`);
-        }
-      );
+      Tweet.findOneAndUpdate({ _id: req.params.id }, { $pull: { likes: req.profile._id } }).exec((err, result) => {
+        req.socket.emit(`unliked ${result._id}`);
+      });
     } else {
-      await Tweet.findOneAndUpdate({ _id: req.params.id }, { $push: { likes: req.profile._id } }).exec(
-        (err, result) => {
-          req.socket.emit(`liked ${result._id}`);
-        }
-      );
+      Tweet.findOneAndUpdate({ _id: req.params.id }, { $push: { likes: req.profile._id } }).exec((err, result) => {
+        req.socket.emit(`liked ${result._id}`);
+      });
     }
     res.status(200).json({ message: 'ok' });
   } catch (error) {
@@ -241,17 +237,13 @@ exports.retweet = async (req, res) => {
   try {
     const tweet = await Tweet.findOne({ _id: req.params.id }).exec();
     if (tweet.retweets.includes(req.profile._id)) {
-      await Tweet.findOneAndUpdate({ _id: req.params.id }, { $pull: { retweets: req.profile._id } }).exec(
-        (err, result) => {
-          req.socket.emit(`undo-retweet ${result._id}`);
-        }
-      );
+      Tweet.findOneAndUpdate({ _id: req.params.id }, { $pull: { retweets: req.profile._id } }).exec((err, result) => {
+        req.socket.emit(`undo-retweet ${req.params.id}`, 'hello');
+      });
     } else {
-      await Tweet.findOneAndUpdate({ _id: req.params.id }, { $push: { retweets: req.profile._id } }).exec(
-        (err, result) => {
-          req.socket.emit(`retweet ${result._id}`);
-        }
-      );
+      Tweet.findOneAndUpdate({ _id: req.params.id }, { $push: { retweets: req.profile._id } }).exec((err, result) => {
+        req.socket.emit(`retweet ${result._id}`);
+      });
     }
     res.status(200).json({ message: 'ok' });
   } catch (error) {

@@ -14,23 +14,26 @@ const fs = require('fs');
 mongoose
   .connect(process.env.DATABASE, {
     useNewUrlParser: true,
-    useCreateIndex: true,
-    useFindAndModify: false,
     useUnifiedTopology: true,
   })
   .then(() => console.log('DATABASE CONNECTED'))
   .catch((err) => console.log(`DATABASE CONNECTION ERROR:${err.message}`));
+app.use(function (err, req, res, next) {
+  if (err.name === 'UnauthorizedError') {
+    res.status(401).json({ error: 'Unauthorized!' });
+  }
+});
 app.use(cors());
 app.use(morgan('dev'));
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json({ limit: '2mb' }));
-app.use(expressValidator());
+// app.use(expressValidator());
 app.use(requestIp.mw());
-app.use(function (err, req, res, next) {
-  if (err.name === 'UnauthorizedError') {
-    res.status(401).json({ error: 'Unauthorized!' });
-  }
+let socket;
+app.use(function (req, res, next) {
+  req.socket = socket;
+  next();
 });
 
 fs.readdirSync('./routes').map((r) => app.use('/api', require('./routes/' + r)));
@@ -47,15 +50,10 @@ const io = require('socket.io')(server, {
   transports: ['websocket', 'polling', 'flashsocket'],
   allowUpgrades: true,
 });
-const socket = io.on('connection', (socket) => {
-  socket.on('end', function () {
+
+io.on('connection', (s) => {
+  s.on('end', function () {
     socket.disconnect();
   });
-  return socket;
+  socket = s;
 });
-
-app.use(function (req, res, next) {
-  req.socket = socket;
-  next();
-});
-//routes
