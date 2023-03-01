@@ -35,6 +35,9 @@ app.use(function (req, res, next) {
   req.socket = socket;
   next();
 });
+app.get('/health', (req, res) => {
+  return res.send('ok');
+});
 
 fs.readdirSync('./routes').map((r) => app.use('/api', require('./routes/' + r)));
 
